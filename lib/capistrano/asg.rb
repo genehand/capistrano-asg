@@ -52,7 +52,9 @@ def autoscale(groupname, **args)
     if asg_instance.health_status != 'Healthy'
       puts "Autoscaling: Skipping unhealthy instance #{asg_instance.id}"
     else
-      ec2_instance = ec2_resource.instance(asg_instance.id)
+      with_retry do
+        ec2_instance = ec2_resource.instance(asg_instance.id)
+      end
       hostname = ec2_instance.private_ip_address
       puts "Autoscaling: Adding server #{hostname}"
       # create a complete temp copy of the array contents instead of just copying the references
